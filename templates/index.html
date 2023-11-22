@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask Model Selector</title>
+    <!-- Include Bootstrap stylesheet -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            color: #495057;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .container {
+            margin-top: 50px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            background-color: #ffffff;
+            max-width: 600px; /* Adjust the maximum width as needed */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        label {
+            font-weight: bold;
+            color: #007bff;
+            font-size: 18px;
+        }
+
+        .form-control {
+            margin-bottom: 20px;
+            font-size: 16px;
+            height: 50px; /* Increase the height of the input text box */
+        }
+
+        button {
+            background-color: #007bff;
+            border: none;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        h1, h2 {
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        /* Styling for the output box */
+        .output-box {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        #input_text {
+            height: 200px; /* Adjust the height as needed */
+            resize: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="text-center">
+            <h1 class="mt-3">Flask Model Selector</h1>
+        </div>
+
+        <form method="post" action="/">
+            <div class="form-group">
+                <label for="model">选择模型：</label>
+                <select class="form-control" name="model" id="model">
+                    <option value="CodeBERT" {% if model == 'CodeBERT' %}selected{% endif %}>CodeBERT</option>
+                    <option value="CodeT5" {% if model == 'CodeT5' %}selected{% endif %}>CodeT5</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="pretraining">选择是否需要预训练：</label>
+                <select class="form-control" name="pretraining" id="pretraining">
+                    <option value="pretrained" {% if pretraining == 'pretrained' %}selected{% endif %}>需要预训练</option>
+                    <option value="not_pretrained" {% if pretraining == 'not_pretrained' %}selected{% endif %}>不需要预训练</option>
+                    <option value="transfer_learning" {% if pretraining == 'transfer_learning' %}selected{% endif %}>迁移学习</option>
+                </select>
+            </div>
+
+            <div id="tokenizerSection" class="form-group">
+             <label for="tokenizer">选择Tokenizer：</label>
+                <select class="form-control" name="tokenizer" id="tokenizer">
+         <option value="BPE" {% if tokenizer == 'BPE' %}selected{% endif %}>BPE tokenizer</option>
+            <option value="word_level" {% if tokenizer == 'word_level' %}selected{% endif %}>Word-level tokenizer</option>
+     </select>
+            </div>
+
+            <div class="form-group">
+                <label for="model_language">选择模型语言：</label>
+                <select class="form-control" name="model_language" id="model_language">
+                    <option value="C++" {% if model_language == 'C++' %}selected{% endif %}>C++</option>
+                    <option value="python" {% if model_language == 'python' %}selected{% endif %}>Python</option>
+                    <option value="whole" {% if model_language == 'whole' %}selected{% endif %}>Whole</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="input_text">输入文本：</label>
+                <textarea class="form-control" name="input_text" id="input_text" rows="40" cols="80" style="resize: none;">{{ input_text }}</textarea>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">获取模型输出</button>
+            </div>
+        </form>
+
+        {% if model_output %}
+            <div class="output-box text-center mt-3">
+                <h2>{{ model_output }}</h2>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Include Bootstrap JavaScript files -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script>
+    // Function to toggle the visibility of the tokenizer section
+    function toggleTokenizerSection() {
+        var pretrainingValue = document.getElementById("pretraining").value;
+        var tokenizerSection = document.getElementById("tokenizerSection");
+
+        // Check if the pretraining value is not equal to 'transfer_learning'
+        if (pretrainingValue !== 'transfer_learning') {
+            tokenizerSection.style.display = "block"; // Show the tokenizer section
+        } else {
+            tokenizerSection.style.display = "none"; // Hide the tokenizer section
+        }
+    }
+
+    // Add an event listener to the pretraining dropdown to trigger the toggle function
+    document.getElementById("pretraining").addEventListener("change", toggleTokenizerSection);
+
+    // Initial call to set the initial state based on the pretraining value
+    toggleTokenizerSection();
+</script>
+</body>
+</html>
